@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "experimentalDecorators": true
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "makerspaceattendanceappsscript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cobular",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "devDependencies": {},
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.45"
+  },
+  "prettier": {
+    "semi": true,
+    "arrowParens": "always",
+    "trailingComma": "all"    
+  }
+}
