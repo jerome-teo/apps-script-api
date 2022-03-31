@@ -44,8 +44,8 @@ abstract class RequestHandler {
 
   formatUser(rowData: any[]): StringObject {
     const data = SpreadsheetApp.getActiveSheet()
-      .getRange(1, 1, 1, 6)
-      .getValues();
+        .getRange(1, 1, 1, 50)
+        .getValues();
     const headings = data[0];
 
     let read_headings_count = 0;
@@ -63,14 +63,24 @@ abstract class RequestHandler {
     }
     return user;
   }
+
+  // Count the number of headings
+  countNumHeadings(headings: any[]): number | undefined {
+    for (let i = 0; i < headings.length; i++) {
+      if (headings[i] === "") {
+        return i + 1;
+      }
+    }
+    return 0;
+  }
 }
 
 export abstract class GetHandler extends RequestHandler {
   event: GoogleAppsScript.Events.DoGet;
 
   constructor(
-    ID_COLUMN: number | undefined,
-    event: GoogleAppsScript.Events.DoGet,
+      ID_COLUMN: number | undefined,
+      event: GoogleAppsScript.Events.DoGet,
   ) {
     super(ID_COLUMN);
     this.event = event;

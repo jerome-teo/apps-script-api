@@ -1,9 +1,25 @@
-import {LooselyTypedObject, PostHandler, StringObject} from "../Types";
+import {LooselyTypedObject, PostHandler} from "../Types";
+
+interface Columns {
+  [key: string]: {
+    colId: number
+    colName: string
+  }
+}
 
 // noinspection UnnecessaryContinueJS
 export class upsertOneStatus extends PostHandler {
   private userId: string | undefined;
-  private cols: StringObject = {};
+  private readonly cols: Columns;
+  private numHeadings: number | undefined;
+
+  constructor(
+      ID_COLUMN: number | undefined,
+      event: GoogleAppsScript.Events.DoGet,
+  ) {
+    super(ID_COLUMN, event);
+    this.cols = {}
+  }
 
   process(): GoogleAppsScript.Content.TextOutput {
     if (this.userId === undefined)
@@ -11,22 +27,42 @@ export class upsertOneStatus extends PostHandler {
           "Error parsing query parameter for endpoint `upsertOneStatus`. Please pass a query parameter with name `userId`",
       );
 
+    if (this.numHeadings === undefined)
+      return ContentService.createTextOutput(
+          "Internal error counting number of headings. Please ensure nothing" +
+          " weird is happening...`",
+      );
+
     // Check if we can find this row
     let userRowIndex = this.rowQueryIndex(this.userId);
+    const sheet = SpreadsheetApp.getActiveSheet();
     if (userRowIndex === undefined) {
       // Need to create row
+      sheet.appendRow([
+        this.userId,
+        ...Array<string>(this.numHeadings - 2).fill("false")
+      ])
+    }
 
-    } else {
-      // Need to update row
-
+    // Now, find the index of the row we just created
+    userRowIndex = this.rowQueryIndex(this.userId);
+    // If it's undefined, scream and shout cause we just fucked up
+    if (userRowIndex === undefined)
+      return ContentService.createTextOutput(
+          `Failed to insert row for user: ${this.userId}`,
+      );
+    // Now update the given row
+    for (const colKey in this.cols) {
+      const colData = this.cols[colKey]
+      sheet.getRange(userRowIndex + 1, colData.colId + 1).setValue(colData.colName)
     }
 
     // Get row value from DB and return as a sanity check
     const userRows: LooselyTypedObject = {};
-    let userRow = this.rowQueryContents(this.userId);
+    const userRow = this.rowQueryContents(this.userId);
     if (userRow === undefined)
       return ContentService.createTextOutput(
-          `Failed to insert userid: ${this.userId}`,
+          `Failed to insert row for user: ${this.userId}`,
       );
     userRows[this.userId] = this.formatUser(userRow);
 
@@ -44,14 +80,18 @@ export class upsertOneStatus extends PostHandler {
     this.userId = this.event.parameter.userId;
 
     // Now pull headers from the other parameters
-    const data = SpreadsheetApp.getActiveSheet().getRange(1, 1, 1, 6).getValues();
+    const data = SpreadsheetApp.getActiveSheet().getRange(1, 1, 1, 50).getValues();
     const headings = data[0];
 
     for (const parametersKey in this.event.parameter) {
-      if (headings.includes(parametersKey))
-        this.cols[parametersKey] = this.event.parameter[parametersKey]
-      else if (parametersKey === "userId")
+      let index: number;
+      if (parametersKey === "userId" || parametersKey === "endpoint")
         continue;
+      else if ((index = headings.indexOf(parametersKey)) !== -1)
+        this.cols[parametersKey] = {
+          colId: index,
+          colName: this.event.parameter[parametersKey]
+        }
       else
         return ContentService.createTextOutput(
             `Error parsing query parameters for endpoint \`upsertOneStatus\`. Could not find a column header named \`${parametersKey}\``,
@@ -60,5 +100,4 @@ export class upsertOneStatus extends PostHandler {
 
     return true;
   }
-
 }
