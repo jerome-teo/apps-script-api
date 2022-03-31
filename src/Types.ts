@@ -40,7 +40,7 @@ export abstract class GetHandler {
 
   formatUser(rowData: any[]): LooselyTypedRow {
     const data = SpreadsheetApp.getActiveSheet()
-      .getRange(0, 0, 0, 6)
+      .getRange(1, 1, 1, 6)
       .getValues();
     const headings = data[0];
 

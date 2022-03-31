@@ -26,6 +26,7 @@ function doGet(
       break;
     case "getAllStatus":
       getHandler = new getAllStatus(ID_COLUMN, event);
+      break;
     default:
       return ContentService.createTextOutput(
         "Error parsing query parameters. Please ensure query parameter`endpoint` is set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",

@@ -1,8 +1,20 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
-    "forceConsistentCasingInFileNames": true,
+    "target": "ES2019",
+    "lib": [
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "experimentalDecorators": true
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
   }
 }
