@@ -34,5 +34,10 @@
     "semi": true,
     "arrowParens": "always",
     "trailingComma": "all"
+  },
+  "eslintConfig": {
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "off"
+    }
   }
 }

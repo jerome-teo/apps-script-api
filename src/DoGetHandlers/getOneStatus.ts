@@ -10,7 +10,7 @@ export class getOneStatus extends GetHandler {
       );
 
     const userRows: LooselyTypedObject = {};
-    let userRow = this.rowQueryContents(this.userId);
+    const userRow = this.rowQueryContents(this.userId);
     if (userRow === undefined)
       return ContentService.createTextOutput(
         `Could not find userId: ${this.userId}`,

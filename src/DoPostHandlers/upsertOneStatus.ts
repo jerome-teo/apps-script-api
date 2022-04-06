@@ -3,7 +3,7 @@ import {LooselyTypedObject, PostHandler} from "../Types";
 interface Columns {
   [key: string]: {
     colId: number
-    colName: string
+    colValue: string
   }
 }
 
@@ -30,32 +30,42 @@ export class upsertOneStatus extends PostHandler {
     if (this.numHeadings === undefined)
       return ContentService.createTextOutput(
           "Internal error counting number of headings. Please ensure nothing" +
-          " weird is happening...`",
+          " weird is happening...",
       );
 
     // Check if we can find this row
-    let userRowIndex = this.rowQueryIndex(this.userId);
+    const userRowData = this.rowQuery(this.userId);
     const sheet = SpreadsheetApp.getActiveSheet();
-    if (userRowIndex === undefined) {
-      // Need to create row
-      sheet.appendRow([
+    if (userRowData === undefined) {
+      // Need to create row, then append it
+
+      // Create row...
+      const colData = [
         this.userId,
         ...Array<string>(this.numHeadings - 2).fill("false")
-      ])
+      ]
+      for (const colKey in this.cols) {
+        const col = this.cols[colKey];
+        colData[col.colId] = col.colValue;
+      }
+
+      // Now append row
+      sheet.appendRow(colData);
+    } else {
+      // Just need to update the row
+      const userRowContents: unknown[] = userRowData.data;
+      for (const colKey in this.cols) {
+        const cellData = this.cols[colKey];
+        userRowContents[cellData.colId] = cellData.colValue;
+      }
+
+      // I think the slow getRange is unavoidable, since we need a Range
+      // object to actually update the row.
+      sheet.getRange(userRowData.index + 1, 1, 1, userRowContents.length).setValues([userRowContents]);
     }
 
-    // Now, find the index of the row we just created
-    userRowIndex = this.rowQueryIndex(this.userId);
-    // If it's undefined, scream and shout cause we just fucked up
-    if (userRowIndex === undefined)
-      return ContentService.createTextOutput(
-          `Failed to insert row for user: ${this.userId}`,
-      );
-    // Now update the given row
-    for (const colKey in this.cols) {
-      const colData = this.cols[colKey]
-      sheet.getRange(userRowIndex + 1, colData.colId + 1).setValue(colData.colName)
-    }
+    // Update data and cache
+    this.refreshDataAndCache();
 
     // Get row value from DB and return as a sanity check
     const userRows: LooselyTypedObject = {};
@@ -80,8 +90,7 @@ export class upsertOneStatus extends PostHandler {
     this.userId = this.event.parameter.userId;
 
     // Now pull headers from the other parameters
-    const data = SpreadsheetApp.getActiveSheet().getRange(1, 1, 1, 50).getValues();
-    const headings = data[0];
+    const headings = this.data[0];
 
     for (const parametersKey in this.event.parameter) {
       let index: number;
@@ -90,13 +99,15 @@ export class upsertOneStatus extends PostHandler {
       else if ((index = headings.indexOf(parametersKey)) !== -1)
         this.cols[parametersKey] = {
           colId: index,
-          colName: this.event.parameter[parametersKey]
+          colValue: this.event.parameter[parametersKey]
         }
       else
         return ContentService.createTextOutput(
             `Error parsing query parameters for endpoint \`upsertOneStatus\`. Could not find a column header named \`${parametersKey}\``,
         );
     }
+
+    this.numHeadings = this.countNumHeadings(this.data[0])
 
     return true;
   }

@@ -11,7 +11,7 @@ export class getManyStatus extends GetHandler {
 
     const userRows: LooselyTypedObject = {};
     for (const userId of this.userIds) {
-      let userRow = this.rowQueryContents(userId);
+      const userRow = this.rowQueryContents(userId);
       if (userRow === undefined)
         return ContentService.createTextOutput(
           `Could not find userId: ${userId}`,
@@ -28,7 +28,8 @@ export class getManyStatus extends GetHandler {
   validate(): GoogleAppsScript.Content.TextOutput | true {
     if (this.event.parameter.userId === undefined)
       return ContentService.createTextOutput(
-        "Error parsing query parameters for endpoint `getAllStatus`. Please pass one or more query parameters with name `userId`",
+        "Error parsing query parameters for endpoint `getManyStatus`. Please" +
+          " pass one or more query parameters with name `userId`",
       );
 
     this.userIds = this.event.parameters.userId;
