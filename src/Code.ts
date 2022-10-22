@@ -1,19 +1,20 @@
-import {getAllStatus} from "./DoGetHandlers/getAllStatus";
-import {getManyStatus} from "./DoGetHandlers/getManyStatus";
-import {getOneStatus} from "./DoGetHandlers/getOneStatus";
-import {GetHandler, PostHandler} from "./Types";
-import {upsertOneStatus} from "./DoPostHandlers/upsertOneStatus";
+import { getAllStatus } from "./DoGetHandlers/getAllStatus";
+import { getManyStatus } from "./DoGetHandlers/getManyStatus";
+import { getOneStatus } from "./DoGetHandlers/getOneStatus";
+import { GetHandler, PostHandler } from "./Types";
+import { upsertOneStatus } from "./DoPostHandlers/upsertOneStatus";
+import { insertOneStatus } from "./DoPostHandlers/insertOneStatus";
 
 const ID_COLUMN = 0;
 
 /// Validate things, then return the requested data
 function doGet(
-    event: GoogleAppsScript.Events.DoGet,
+  event: GoogleAppsScript.Events.DoGet,
 ): GoogleAppsScript.Content.TextOutput {
   // Check that we got the parameter we need
   if (event.parameter === undefined || event.parameter.endpoint === undefined)
     return ContentService.createTextOutput(
-        "Error parsing query parameters. Please pass a query parameter `endpoint` set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
+      "Error parsing query parameters. Please pass a query parameter `endpoint` set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
     );
 
   let getHandler: GetHandler;
@@ -30,7 +31,7 @@ function doGet(
       break;
     default:
       return ContentService.createTextOutput(
-          "Error parsing query parameters. Please ensure query parameter`endpoint` is set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
+        "Error parsing query parameters. Please ensure query parameter`endpoint` is set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
       );
   }
 
@@ -43,12 +44,12 @@ function doGet(
 }
 
 function doPost(
-    event: GoogleAppsScript.Events.DoPost,
+  event: GoogleAppsScript.Events.DoPost,
 ): GoogleAppsScript.Content.TextOutput {
   // Check that we got the parameter we need
   if (event.parameter === undefined || event.parameter.endpoint === undefined)
     return ContentService.createTextOutput(
-        "Error parsing query parameters. Please pass a query parameter" +
+      "Error parsing query parameters. Please pass a query parameter" +
         " `endpoint` set to `upsertOneStatus`, `getManyStatus.",
     );
 
@@ -58,9 +59,12 @@ function doPost(
     case "upsertOneStatus":
       postHandler = new upsertOneStatus(ID_COLUMN, event);
       break;
+    case 'insertOneStatus':
+      postHandler = new insertOneStatus(ID_COLUMN, event);
+      break;
     default:
       return ContentService.createTextOutput(
-          "Error parsing query parameters. Please ensure query parameter`endpoint` is set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
+        "Error parsing query parameters. Please ensure query parameter`endpoint` is set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
       );
   }
 
