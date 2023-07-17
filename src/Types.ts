@@ -48,10 +48,10 @@ abstract class RequestHandler {
     const cache = CacheService.getScriptCache();
     const cached = cache.get("sheetData");
 
-    // Check if it's cached
-    if (cached !== null) {
-      return JSON.parse(cached) as unknown[][];
-    }
+    // // Check if it's cached
+    // if (cached !== null) {
+    //   return JSON.parse(cached) as unknown[][];
+    // }
 
     // If not, refresh the data
     if (sheet === undefined) sheet = SpreadsheetApp.getActiveSheet();

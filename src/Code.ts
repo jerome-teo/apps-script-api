@@ -7,6 +7,20 @@ import { insertOneStatus } from "./DoPostHandlers/insertOneStatus";
 
 const ID_COLUMN = 0;
 
+function testDoGet() {
+  const resp = doGet({
+    parameter: {
+      endpoint: "getAllStatus"
+    }
+  })
+
+  console.log(resp.getContent())
+}
+
+function test() {
+  testDoGet();
+}
+
 /// Validate things, then return the requested data
 function doGet(
   event: GoogleAppsScript.Events.DoGet,
@@ -50,7 +64,7 @@ function doPost(
   if (event.parameter === undefined || event.parameter.endpoint === undefined)
     return ContentService.createTextOutput(
       "Error parsing query parameters. Please pass a query parameter" +
-        " `endpoint` set to `upsertOneStatus`, `getManyStatus.",
+        " `endpoint` set to `upsertOneStatus`, `insertOneStatus.",
     );
 
   let postHandler: PostHandler;

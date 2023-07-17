@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup --config",
     "build-dev": "rollup --config --watch",
-    "deploy": "clasp push",
+    "deploy": "clasp push && clasp deploy",
     "deploy-dev": "clasp push --watch",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },

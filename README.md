@@ -1,6 +1,6 @@
 # Google Sheets Database Thing
 
-Wowza! This is slick - it allows for using a google sheet as a simple CRUD database
+Wowza! This is slick - it allows for using a google sheet as the backing store simple CRUD API. For free!!
 
 ## Setup
 
