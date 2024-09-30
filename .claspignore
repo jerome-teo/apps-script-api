@@ -3,6 +3,7 @@
 
 # except the extensions…
 !appsscript.json
+<!-- !dist/** -->
 # and our transpiled code
 !build/*.js
 
