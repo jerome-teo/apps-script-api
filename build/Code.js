@@ -193,8 +193,8 @@ class upsertOneStatus extends PostHandler {
       //   const col = this.cols[colKey];
       //   colData.push(col.colValue);
       // }
-      const email = this.data.email;  // Access 'email' from the body
-      const needsTravelStipend = this.data.needsTravelStipend;
+      const email = this.cols['email'];  // Access 'email' from the body
+      const needsTravelStipend = this.cols['needsTravelStipend'];
       const colData = [email, needsTravelStipend];
       // Now append row
       sheet.appendRow(colData);
@@ -220,17 +220,18 @@ class upsertOneStatus extends PostHandler {
     if (userRow === undefined) return ContentService.createTextOutput(`Failed to insert row for user: ${this.userId}`);
     userRows[this.userId] = this.formatUser(userRow);
     const resp = ContentService.createTextOutput(JSON.stringify(userRows));
-    resp.setMimeType(ContentService.MimeType.JSON).setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-      .setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-      .setHeader('Access-Control-Allow-Headers', 'Content-Type')
-      .setHeader('Access-Control-Allow-Credentials', 'true');
+    resp.setMimeType(ContentService.MimeType.JSON);
+    resp.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    resp.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    resp.setHeader('Access-Control-Allow-Credentials', 'true');
     return resp;
   }
   validate() {
-    return ContentService.createTextOutput("Validate");
-    console.log("Validate")
-    console.log(this.data)
-    if (!this.data.email) {
+    // return ContentService.createTextOutput("Validate");
+    // console.log("Validate")
+    // console.log(this.data)
+    if (!this.cols['email']) {
       return ContentService.createTextOutput("Error: Missing 'email' in body");
     }
     // if (this.event.parameter.userId === undefined) {
@@ -240,7 +241,7 @@ class upsertOneStatus extends PostHandler {
 
     // }
     // this.userId = this.event.parameter.userId;
-    this.userId = this.data.email;
+    this.userId = this.cols['email'];
 
     // Now pull headers from the other parameters
     const headings = this.data[0];
@@ -364,7 +365,7 @@ function doPost(event) {
 
 
   const data = JSON.parse(event.postData.contents); // Parse the JSON body
-
+  console.log(JSON.stringify(data));
   const email = data.email;
   const needsTravelStipend = data.needsTravelStipend;
   const endpoint = data.endpoint;
@@ -389,6 +390,7 @@ function doPost(event) {
   }
 
   // Validate the query parameters
+  postHandler.cols = data
   const validateResult = postHandler.validate();
   if (validateResult !== true) return validateResult;
 
