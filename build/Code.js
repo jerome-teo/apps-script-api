@@ -195,7 +195,9 @@ class upsertOneStatus extends PostHandler {
       // }
       const email = this.cols['email'];  // Access 'email' from the body
       const needsTravelStipend = this.cols['needsTravelStipend'];
-      const colData = [email, needsTravelStipend];
+      const name = this.cols['name'];
+      const college = this.cols['college'];
+      const colData = [email, needsTravelStipend, name, college];
       // Now append row
       sheet.appendRow(colData);
     } else {
@@ -253,7 +255,7 @@ class upsertOneStatus extends PostHandler {
     //   }; else return ContentService.createTextOutput(`Error parsing query parameters for endpoint \`upsertOneStatus\`. Could not find a column header named \`${parametersKey}\``);
     // }
     this.numHeadings = this.countNumHeadings(this.data[0]);
-    if (this.numHeadings !== 2) {
+    if (this.numHeadings !== 4) {
       return ContentService.createTextOutput("Error: Number of headings incorrect");
     }
     return true;
@@ -324,9 +326,24 @@ function test() {
   testDoGet();
 }
 
+
+function handleOptions() {
+  var output = ContentService.createTextOutput();
+  output.setMimeType(ContentService.MimeType.JSON);
+  output.setContent(JSON.stringify({ status: 'options' }));
+
+  // Handle CORS for preflight (OPTIONS) requests
+  return output.setHeaders({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  });
+}
+
 /// Validate things, then return the requested data
 function doGet(event) {
   // Check that we got the parameter we need
+  return handleOptions();
   return ContentService.createTextOutput(JSON.stringify(event));
 
   if (event.parameter === undefined || event.parameter.endpoint === undefined) return ContentService.createTextOutput("Calling here!! Error parsing query parameters. Please pass a query parameter `endpoint` set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.");
