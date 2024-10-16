@@ -31,22 +31,24 @@ There is only 1 url endpoint available, it's at the URL google apps gives you. I
 
 #### Endpoints:
 (`endpoint` parameter controls which logical endpoint we hit)
-1. `getOneStatus` - get the status of one field by ID  
-1. `getManyStatus` - get the status of many fields by a list of IDs
-1. `getAllStatus` - return all data from the databse
+1. `getOneStatus` - get the status of one row by ID  
+1. `getManyStatus` - get the status of many rows by a list of IDs
+1. `getAllStatus` - return all data from the database
 
 #### `getOneStatus`
-Gets the status of one row by it's ID  
+Gets the status of one row by its ID
+
 **Params**:
 * `userId` (one required) - the user ID we want to request
 
 #### `getManyStatus` 
-Get the status of many fields by multiple IDs
+Get the status of many rows by multiple IDs
+
 **Params**:
 * `userId` (one or many required) - the user ID (or IDs) we want to request
 
 #### `getAllStatus`
-Gets the status of all rows from the databse
+Gets the status of all rows from the database
 
 No params, always returns all rows
 
@@ -59,17 +61,19 @@ No params, always returns all rows
 #### Endpoints:
 (`endpoint` parameter controls which logical endpoint we hit)
 1. `upsertOneStatus` - Update or insert a new row based on user id
-1. `insertOne` - Insert a new row based on user ID
+1. `insertOneStatus` - Insert a new row based on user ID
 
 #### `upsertOneStatus`
 Update or insert a new row based on user ID and the elements on the first row of the database
-**Params**
+
+**Request body**
 * `userId` - the userID of the row we're inserting or updating
-* `[heading name]` - provide header names as query parameters
+* `[heading name]` - provide header names in the request body
 
 
 #### `insertOneStatus`
 Insert a new row based on user ID and the elements on the first row of the database
-**Params**
+
+**Request body**
 * `userId` - the userID of the row we're inserting
-* `[heading name]` - provide header names as query parameters
+* `[heading name]` - provide header names in the request body
