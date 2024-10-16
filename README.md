@@ -10,7 +10,7 @@ Wowza! This is slick - it allows for using a google sheet as the backing store s
 3. Sign into clasp - `npx clasp login`
     1. Choose the account that owns the sheet, go through the oauth thing
 4. Enable the Apps Script API for the account - `https://script.google.com/home/usersettings`, flip that to `on` 
-5. `npm run deploy` to push the code to the apps script server
+5. `npm run build`, then `npm run deploy` to push the code to the apps script server
 6. Go back to the apps script document. Reload and ensure the code is present
 7. Hit the blue `Deploy` button in the top right:
     1. Ensure `Web App` is the mode
@@ -68,7 +68,7 @@ Update or insert a new row based on user ID and the elements on the first row of
 * `[heading name]` - provide header names as query parameters
 
 
-#### `insertOne`
+#### `insertOneStatus`
 Insert a new row based on user ID and the elements on the first row of the database
 **Params**
 * `userId` - the userID of the row we're inserting
