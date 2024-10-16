@@ -1,7 +1,7 @@
 import { getAllStatus } from "./DoGetHandlers/getAllStatus";
 import { getManyStatus } from "./DoGetHandlers/getManyStatus";
 import { getOneStatus } from "./DoGetHandlers/getOneStatus";
-import { GetHandler, PostHandler } from "./Types";
+import { CleanedData, GetHandler, PostHandler } from "./Types";
 import { upsertOneStatus } from "./DoPostHandlers/upsertOneStatus";
 import { insertOneStatus } from "./DoPostHandlers/insertOneStatus";
 
@@ -64,21 +64,29 @@ function doPost(
   if (event.parameter === undefined || event.parameter.endpoint === undefined)
     return ContentService.createTextOutput(
       "Error parsing query parameters. Please pass a query parameter" +
-        " `endpoint` set to `upsertOneStatus`, `insertOneStatus.",
+        " `endpoint` set to `upsertOneStatus`, `insertOneStatus.`",
     );
 
   let postHandler: PostHandler;
+  let data: CleanedData;
+  try {
+    data = JSON.parse(event.postData.contents);
+  } catch {
+    data = {};
+  }
+
 
   switch (event.parameter.endpoint) {
     case "upsertOneStatus":
-      postHandler = new upsertOneStatus(ID_COLUMN, event);
+      postHandler = new upsertOneStatus(ID_COLUMN, data);
       break;
     case 'insertOneStatus':
-      postHandler = new insertOneStatus(ID_COLUMN, event);
+      postHandler = new insertOneStatus(ID_COLUMN, data);
       break;
     default:
       return ContentService.createTextOutput(
-        "Error parsing query parameters. Please ensure query parameter`endpoint` is set to either `getOneStatus`, `getManyStatus`, or `getAllStatus`.",
+        "Error parsing query parameters. Please pass a query parameter" +
+        " `endpoint` set to `upsertOneStatus`, `insertOneStatus.`",
       );
   }
 
