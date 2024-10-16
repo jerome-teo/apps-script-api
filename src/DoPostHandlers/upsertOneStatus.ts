@@ -1,4 +1,4 @@
-import {LooselyTypedObject, PostHandler} from "../Types";
+import {CleanedData, LooselyTypedObject, PostHandler} from "../Types";
 
 interface Columns {
   [key: string]: {
@@ -15,16 +15,16 @@ export class upsertOneStatus extends PostHandler {
 
   constructor(
       ID_COLUMN: number | undefined,
-      event: GoogleAppsScript.Events.DoGet,
+      requestBody: CleanedData,
   ) {
-    super(ID_COLUMN, event);
+    super(ID_COLUMN, requestBody);
     this.cols = {}
   }
 
   process(): GoogleAppsScript.Content.TextOutput {
     if (this.userId === undefined)
       return ContentService.createTextOutput(
-          "Error parsing query parameter for endpoint `upsertOneStatus`. Please pass a query parameter with name `userId`",
+          "Bad request for endpoint `upsertOneStatus`: Please provide a `userId`.",
       );
 
     if (this.numHeadings === undefined)
@@ -83,28 +83,25 @@ export class upsertOneStatus extends PostHandler {
   }
 
   validate(): GoogleAppsScript.Content.TextOutput | true {
-    if (this.event.parameter.userId === undefined)
+    if (this.requestBody.userId === undefined)
       return ContentService.createTextOutput(
-          "Error parsing query parameters for endpoint `upsertOneStatus`. Please pass a query parameter `userId`",
+          "Bad request for endpoint `upsertOneStatus`: Please provide a `userId`.",
       );
-    this.userId = this.event.parameter.userId;
+    this.userId = this.requestBody.userId;
 
     // Now pull headers from the other parameters
     const headings = this.data[0];
 
-    for (const parametersKey in this.event.parameter) {
+    for (const parametersKey in this.requestBody) {
       let index: number;
-      if (parametersKey === "userId" || parametersKey === "endpoint")
+      if (parametersKey === "userId")
         continue;
       else if ((index = headings.indexOf(parametersKey)) !== -1)
         this.cols[parametersKey] = {
           colId: index,
-          colValue: this.event.parameter[parametersKey]
+          colValue: this.requestBody[parametersKey]
         }
-      else
-        return ContentService.createTextOutput(
-            `Error parsing query parameters for endpoint \`upsertOneStatus\`. Could not find a column header named \`${parametersKey}\``,
-        );
+      // We simply ignore any data in the request body that doesn't match any columns
     }
 
     this.numHeadings = this.countNumHeadings(this.data[0])

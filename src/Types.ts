@@ -4,6 +4,10 @@ export interface StringObject {
   [key: string]: string;
 }
 
+export interface CleanedData {
+  [key: string]: any;
+}
+
 export interface LooselyTypedObject {
   [key: string]: StringObject;
 }
@@ -146,14 +150,14 @@ export abstract class GetHandler extends RequestHandler {
 }
 
 export abstract class PostHandler extends RequestHandler {
-  event: GoogleAppsScript.Events.DoGet;
+  requestBody: CleanedData;
 
   constructor(
       ID_COLUMN: number | undefined,
-      event: GoogleAppsScript.Events.DoGet,
+      requestBody: CleanedData,
   ) {
     super(ID_COLUMN);
-    this.event = event;
+    this.requestBody = requestBody;
   }
 
   abstract validate(): GoogleAppsScript.Content.TextOutput | true;
