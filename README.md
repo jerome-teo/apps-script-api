@@ -31,9 +31,9 @@ There is only 1 url endpoint available, it's at the URL google apps gives you. I
 
 #### Endpoints:
 (`endpoint` parameter controls which logical endpoint we hit)
-1. `getOneStatus` - get the status of one field by ID  
-1. `getManyStatus` - get the status of many fields by a list of IDs
-1. `getAllStatus` - return all data from the databse
+1. `getOneStatus` - get the status of one row by ID  
+1. `getManyStatus` - get the status of many rows by a list of IDs
+1. `getAllStatus` - return all data from the database
 
 #### `getOneStatus`
 Gets the status of one row by its ID
@@ -42,13 +42,13 @@ Gets the status of one row by its ID
 * `userId` (one required) - the user ID we want to request
 
 #### `getManyStatus` 
-Get the status of many fields by multiple IDs
+Get the status of many rows by multiple IDs
 
 **Params**:
 * `userId` (one or many required) - the user ID (or IDs) we want to request
 
 #### `getAllStatus`
-Gets the status of all rows from the databse
+Gets the status of all rows from the database
 
 No params, always returns all rows
 
