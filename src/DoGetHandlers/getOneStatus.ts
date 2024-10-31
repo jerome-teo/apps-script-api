@@ -3,31 +3,28 @@ import { GetHandler, LooselyTypedObject } from "../Types";
 export class getOneStatus extends GetHandler {
   private userId: string | undefined;
 
-  process(): GoogleAppsScript.Content.TextOutput {
+  process(): string {
     if (this.userId === undefined)
-      return ContentService.createTextOutput(
-        "Error parsing query parameter for endpoint `getOneStatus`. Please pass a query parameter with name `userId`",
-      );
+      return JSON.stringify({
+        error: "Error parsing query parameter for endpoint `getOneStatus`. Please pass a query parameter with name `userId`",
+      });
 
     const userRows: LooselyTypedObject = {};
     const userRow = this.rowQueryContents(this.userId);
     if (userRow === undefined)
-      return ContentService.createTextOutput(
-        `Could not find userId: ${this.userId}`,
-      );
+      return JSON.stringify({
+        error: `Could not find userId: ${this.userId}`,
+      });
     userRows[this.userId] = this.formatUser(userRow);
 
-    const resp = ContentService.createTextOutput(JSON.stringify(userRows));
-    resp.setMimeType(ContentService.MimeType.JSON);
-
-    return resp;
+    return JSON.stringify(userRows);
   }
 
-  validate(): GoogleAppsScript.Content.TextOutput | true {
+  validate(): string | true {
     if (this.event.parameter.userId === undefined)
-      return ContentService.createTextOutput(
-        "Error parsing query parameters for endpoint `getAllStatus`. Please pass a query parameter `userId`",
-      );
+      return JSON.stringify({
+        error: "Error parsing query parameters for endpoint `getAllStatus`. Please pass a query parameter `userId`",
+      });
     this.userId = this.event.parameter.userId;
     return true;
   }

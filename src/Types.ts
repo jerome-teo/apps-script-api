@@ -144,9 +144,9 @@ export abstract class GetHandler extends RequestHandler {
     this.event = event;
   }
 
-  abstract validate(): GoogleAppsScript.Content.TextOutput | true;
+  abstract validate(): string | true;
 
-  abstract process(): GoogleAppsScript.Content.TextOutput;
+  abstract process(): string;
 }
 
 export abstract class PostHandler extends RequestHandler {
@@ -160,7 +160,7 @@ export abstract class PostHandler extends RequestHandler {
     this.requestBody = requestBody;
   }
 
-  abstract validate(): GoogleAppsScript.Content.TextOutput | true;
+  abstract validate(): string | true;
 
-  abstract process(): GoogleAppsScript.Content.TextOutput;
+  abstract process(): string;
 }

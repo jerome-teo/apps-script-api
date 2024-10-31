@@ -21,17 +21,17 @@ export class upsertOneStatus extends PostHandler {
     this.cols = {}
   }
 
-  process(): GoogleAppsScript.Content.TextOutput {
+  process(): string {
     if (this.userId === undefined)
-      return ContentService.createTextOutput(
-          "Bad request for endpoint `upsertOneStatus`: Please provide a `userId`.",
-      );
+      return JSON.stringify({
+          error: "Bad request for endpoint `upsertOneStatus`: Please provide a `userId`.",
+      });
 
     if (this.numHeadings === undefined)
-      return ContentService.createTextOutput(
-          "Internal error counting number of headings. Please ensure nothing" +
+      return JSON.stringify({
+          error: "Internal error counting number of headings. Please ensure nothing" +
           " weird is happening...",
-      );
+      });
 
     // Check if we can find this row
     const userRowData = this.rowQuery(this.userId);
@@ -71,22 +71,19 @@ export class upsertOneStatus extends PostHandler {
     const userRows: LooselyTypedObject = {};
     const userRow = this.rowQueryContents(this.userId);
     if (userRow === undefined)
-      return ContentService.createTextOutput(
-          `Failed to insert row for user: ${this.userId}`,
-      );
+      return JSON.stringify({
+          error: `Failed to insert row for user: ${this.userId}`,
+      });
     userRows[this.userId] = this.formatUser(userRow);
 
-    const resp = ContentService.createTextOutput(JSON.stringify(userRows));
-    resp.setMimeType(ContentService.MimeType.JSON);
-
-    return resp;
+    return JSON.stringify(userRows);
   }
 
-  validate(): GoogleAppsScript.Content.TextOutput | true {
+  validate(): string | true {
     if (this.requestBody.userId === undefined)
-      return ContentService.createTextOutput(
-          "Bad request for endpoint `upsertOneStatus`: Please provide a `userId`.",
-      );
+      return JSON.stringify({
+          error: "Bad request for endpoint `upsertOneStatus`: Please provide a `userId`.",
+      });
     this.userId = this.requestBody.userId;
 
     // Now pull headers from the other parameters

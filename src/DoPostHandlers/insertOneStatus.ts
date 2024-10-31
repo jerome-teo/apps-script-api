@@ -21,17 +21,17 @@ export class insertOneStatus extends PostHandler {
     this.cols = {};
   }
 
-  process(): GoogleAppsScript.Content.TextOutput {
+  process(): string {
     if (this.userId === undefined)
-      return ContentService.createTextOutput(
-        "Bad request for endpoint `insertOneStatus`: Please provide a `userId`.",
-      );
+      return JSON.stringify({
+        error: "Bad request for endpoint `insertOneStatus`: Please provide a `userId`.",
+      });
 
     if (this.numHeadings === undefined)
-      return ContentService.createTextOutput(
-        "Internal error counting number of headings. Please ensure nothing" +
+      return JSON.stringify({
+        error: "Internal error counting number of headings. Please ensure nothing" +
           " weird is happening...",
-      );
+      });
 
     // Check if we can find this row
     const sheet = SpreadsheetApp.getActiveSheet();
@@ -53,17 +53,16 @@ export class insertOneStatus extends PostHandler {
     // Update data and cache
     this.refreshDataAndCache();
 
-    const resp = ContentService.createTextOutput("true");
-    resp.setMimeType(ContentService.MimeType.TEXT);
-
-    return resp;
+    return JSON.stringify({
+      success: true
+    });
   }
 
-  validate(): GoogleAppsScript.Content.TextOutput | true {
+  validate(): string | true {
     if (this.requestBody.userId === undefined)
-      return ContentService.createTextOutput(
-        "Bad request for endpoint `insertOneStatus`: Please provide a `userId`.",
-      );
+      return JSON.stringify({
+        error: "Bad request for endpoint `insertOneStatus`: Please provide a `userId`.",
+      });
     this.userId = this.requestBody.userId;
 
     // Now pull headers from the other parameters
